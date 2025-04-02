@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" style="background: #dae9f6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/start.css') }}">
+    <title>DocMedi</title>
+</head>
+<body class="body1">
+    
+    <div class="flex1">
+      <div class="flex2">
+          <img src="{{ url_for('static', filename='images/doct.png') }}" alt="Doctor Image" class="doc_img">
+      </div>
+      <div class="flex3">
+          <h1 class="heading">DocMedi</h1>
+          <div class="div2">
+            
+          <h3 class="desc">Step into the shoes of a doctor!</h3>
+          <h3  class="desc"> Diagnose patients, earn coins, and test your medical knowledge!</h3>
+
+          </div>
+          <button id="startGameBtn" class="button-start">Start Game</button>
+          
+          <!-- Add chat assistance button -->
+          <a href="{{ url_for('chat') }}" class="button-chat">Need Assistance?</a>
+          
+          <!-- Add leaderboard button and popup here -->
+          <button id="leaderboardBtn" class="leaderboard-btn">View Leaderboard</button>
+
+          <div id="leaderboardPopup" class="leaderboard-popup">
+              <div class="leaderboard">
+                  <h2>🏆 Leaderboard</h2>
+                  <table>
+                      <tr>
+                          <th>Rank</th>
+                          <th>Name</th>
+                          <th>Score</th>
+                          <th>Level</th>
+                          <th>Date</th>
+                      </tr>
+                      {% for entry in leaderboard %}
+                      <tr>
+                          <td>{{ loop.index }}</td>
+                          <td>{{ entry.name }}</td>
+                          <td>{{ entry.score }}</td>
+                          <td>{{ entry.level }}</td>
+                          <td>{{ entry.date }}</td>
+                      </tr>
+                      {% endfor %}
+                      {% if not leaderboard %}
+                      <tr>
+                          <td colspan="5">No scores yet. Be the first!</td>
+                      </tr>
+                      {% endif %}
+                  </table>
+              </div>
+          </div>
+          
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Player Information</h2>
+             <form  action="{{ url_for('instructions') }}" >
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" min="1" max="120" required>
+                </div>
+                
+                <h3>Select Category</h3>
+                <div class="level-selection">
+                    <div class="level-card" id="level1-card">
+                        <input type="radio" id="level1" name="level" value="level1" checked>
+                        <label for="level1">
+                            <h4>Student</h4>
+                            <p>Introduction to the basics, where players learn the foundations of medicine and healthcare.</p>
+                        </label>
+                    </div>
+                    
+                    <div class="level-card" id="level2-card">
+                        <input type="radio" id="level2" name="level" value="level2">
+                        <label for="level2">
+                            <h4>Medical Enthusiastic</h4>
+                            <p>A more intermediate level where players face real-world medical challenges and build on their knowledge.</p>
+                        </label>
+                    </div>
+                    
+                    <div class="level-card" id="level3-card">
+                        <input type="radio" id="level3" name="level" value="level3">
+                        <label for="level3">
+                            <h4>Medical Professional</h4>
+                            <p>The final, hardest level where players apply advanced skills and problem-solving in complex, life-saving scenarios.</p>
+                        </label>
+                    </div>
+                    
+                    <div class="level-card assistant-card" id="chat-card">
+                        <a href="{{ url_for('chat') }}" class="chat-link">
+                            <h4>Need assistance?</h4>
+                            <p>Talk to our medical chatbot assistant to learn about health topics, get explanations, or ask questions about medical concepts.</p>
+                        </a>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Start Playing</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById("loginModal");
+        
+        // Get the button that opens the modal
+        var btn = document.getElementById("startGameBtn");
+        
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+        
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+        
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Add visual selection for level cards
+        const levelCards = document.querySelectorAll('.level-card');
+        const radioInputs = document.querySelectorAll('input[name="level"]');
+        
+        radioInputs.forEach((input, index) => {
+            if (input.checked) {
+                levelCards[index].classList.add('selected');
+            }
+            
+            input.addEventListener('change', function() {
+                levelCards.forEach(card => card.classList.remove('selected'));
+                if (this.checked) {
+                    levelCards[index].classList.add('selected');
+                }
+            });
+        });
+
+        // Code for leaderboard button hover effect
+        const leaderboardBtn = document.getElementById('leaderboardBtn');
+        const leaderboardPopup = document.getElementById('leaderboardPopup');
+
+        leaderboardBtn.addEventListener('mouseenter', () => {
+            leaderboardPopup.style.display = 'block';
+        });
+
+        leaderboardBtn.addEventListener('mouseleave', () => {
+            leaderboardPopup.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

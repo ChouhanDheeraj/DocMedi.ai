@@ -1,0 +1,289 @@
+.body1{
+      align-items: center;
+    text-align: center;
+    margin-top: 4pc;
+}
+.flex1{
+      display: flex;
+          gap: 100px;
+  
+
+}
+.flex3{
+  margin-top: 77px;
+}
+.doc_img{
+      width: 348px;
+    margin-left: 70px;
+
+}
+.heading{
+      margin: 0;
+    font-size: 87px;
+    text-align: center;
+    color: #b35214;
+
+}
+.desc{
+  text-align: center;
+  font-size:20px;
+   text-align: center;
+    /* align-items: center; */
+    margin: auto;
+   
+    justify-content: center;
+    padding: 13px 29px;
+    /* border: 1px solid black; */
+    width: fit-content;
+    
+    font-size: 33px;
+}
+.button-start{
+  background: #644113;
+    padding: 8px 19px;
+    color: wheat;
+    font-size: 21px;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid #6b3030;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+/* Chat Button Styles */
+.button-chat {
+       background: #644113;
+    font-family: math;
+    padding: 8px 19px;
+    color: wheat;
+    font-weight: 600;
+    font-size: 23px;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid #6b3030;
+    border-radius: 9px;
+    cursor: pointer;
+}
+.div2{
+    margin-bottom:20px;
+}
+
+.button-chat:hover {
+    background: #25964f;
+}
+
+/* Chat Card in modal */
+.assistant-card {
+    background-color: white;
+    border-color: #1e7b45 !important;
+}
+
+.assistant-card:hover {
+    background-color: #c8e6c9 !important;
+    border-color: #1e7b45 !important;
+}
+
+.chat-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.assistant-card h4 {
+    color: #1e7b45 !important;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    background-color: #f8f8f8;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    width: 80%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.level-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.level-card {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.level-card:hover {
+    border-color: #b35214;
+    background-color: rgba(179, 82, 20, 0.05);
+}
+
+.level-card.selected {
+    border-color: #b35214;
+    background-color: rgba(179, 82, 20, 0.1);
+    box-shadow: 0 0 10px rgba(179, 82, 20, 0.3);
+}
+
+.level-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.level-card label {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+}
+
+.level-card h4 {
+    margin-top: 0;
+    color: #b35214;
+}
+
+.level-card p {
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.submit-btn {
+    background: #644113;
+    padding: 12px 24px;
+    color: wheat;
+    font-size: 18px;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid #6b3030;
+    border-radius: 9px;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto 0;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #7d511a;
+}
+
+.leaderboard {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+}
+
+.leaderboard h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard th, .leaderboard td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.leaderboard th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.leaderboard tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.leaderboard tr:hover {
+    background-color: #f1f1f1;
+}
+
+.leaderboard-btn {
+    background: #644113;
+    padding: 8px 19px;
+    color: wheat;
+    font-size: 21px;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid #6b3030;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.leaderboard-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+.leaderboard {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+}

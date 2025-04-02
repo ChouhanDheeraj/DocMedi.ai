@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Diagnosis Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="index">
+        <div class="scoreboard">
+            <div class="scoreboard-inner">
+                <div class="score-info">
+                    <h4 class='side1'>👨‍⚕️ Patient Left: {{ patients_left }} </h4>
+                    <h4 class='side1'> 🪙 Score: {{ score }} coins </h4>
+                </div>
+                <div class="user-info">
+                    <h4 class='side1'>👨‍⚕️ Dr. {{ user_name }}</h4>
+                    <h4 class='side1'>🎮 {{ level.name }}</h4>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bubble">
+            🩺 <b> Patient:</b> <br>  
+            <div class="complaint">{{ current_patient }}</div>
+        </div>
+        
+        <div class="button-container">
+            <form method="POST" action="{{ url_for('submit') }}" class="form_but1">
+                {% for disease in disease_options %}
+                <button type="submit" name="selected_disease" value="{{ disease }}" 
+                        class="custom-button" id="btn-{{ disease }}" 
+                        onclick="setActive('{{ disease }}')">
+                    {{ disease }}
+                </button>
+                {% endfor %}
+            </form>
+        </div>
+        
+        
+        
+        {% if disease_info %}
+            <!-- Modal Overlay (shown when clicking disease buttons) -->
+            <div class="modal-overlay" id="modal">
+                <div class="modal-content">
+                    <button class="close-button" onclick="closeModal()">❌</button>
+                    {% if feedback %}
+            {% if ans_zone == "true" %}
+                <div class="custom-correct">{{ feedback }}</div>
+            {% elif ans_zone == "false" %}
+                <div class="custom-wrong">{{ feedback }}</div>
+            
+            {% endif %}
+        {% endif %}
+                    <h3 class='h3'>🔍 Disease Explanation</h3>
+                    <hr>
+                    <div class="disease_info">{{ disease_info | safe }}</div>
+                </div>
+            </div>
+            
+            <!-- Regular disease info display
+            <div class="expander-container">
+                <h3>🔍 Disease Explanation</h3>
+                <div class="disease_info">{{ disease_info | safe }}</div>
+            </div> -->
+        {% endif %}
+        
+        <form method="POST" action="{{ url_for('next_patient') }}">
+            <button type="submit" class="next_button">Next Patient</button>
+        </form>
+        
+        {% if patients_left == 0 %}
+            <form method="GET" action="{{ url_for('game_over') }}">
+                <button type="submit" class="custom-button end-game-button">End Game</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let lastSelected = localStorage.getItem("selectedDisease");
+            
+            // Auto-open modal if there's disease info
+            {% if disease_info %}
+                document.getElementById("modal").style.display = "flex";
+            {% endif %}
+            
+            // Set active button if exists
+            document.querySelectorAll('.custom-button').forEach(button => {
+                if (button.value === lastSelected) {
+                    button.classList.add("active");
+                } else {
+                    button.classList.remove("active");
+                }
+            });
+        });
+        
+        function setActive(disease) {
+            localStorage.setItem("selectedDisease", disease);
+            
+            document.querySelectorAll('.custom-button').forEach(button => {
+                if (button.value === disease) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+        
+        function openModal() {
+            document.getElementById("modal").style.display = "flex";
+        }
+        
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+    </script>
+</body>
+</html>

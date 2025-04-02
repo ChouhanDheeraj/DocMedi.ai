@@ -1,0 +1,277 @@
+body {
+    background-image: url("https://i.postimg.cc/dtKhck56/DALL-E-2025-03-26-11-11-54-A-modern-hospital-consultation-room-with-a-doctor-and-a-patient-The-do.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Scoreboard Styles */
+.scoreboard-inner {
+    margin-top: 62px;
+    padding: 21px 22px;
+    width: fit-content;
+    background: white;
+    opacity: 0.9;
+    margin-left: 100px;
+    margin-bottom: 48px;
+    font-size: 20px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.score-info, .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Patient Complaint Bubble */
+.bubble {
+    text-align: center;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+    margin: auto;
+    width: 577px;
+    margin-bottom: 30px;
+    background: white;
+    opacity: 0.9;
+    padding: 30px 29px;
+    border-radius: 20px;
+    font-size: 20px;
+    line-break: auto;
+}
+
+
+.complaint {
+        text-align: left;
+        
+        margin: auto;
+        padding: 15px 10px;
+    }
+    .complaint h2 {
+        text-align: center;  /* Center the heading */
+        font-size: 19px;
+    }
+    .complaint ul {
+        /* Left align bullet points */
+        overflow-y: scroll;
+    height: 221px;
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+    }
+
+.side1 {
+    margin: 0;
+}
+
+/* Button Styles */
+.form_but1 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    justify-content: center;
+    padding: 20px;
+    max-width: 632px;
+    margin: auto;
+}
+/* Modal Background */
+.modal-overlay {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Transparent black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ 
+/* Modal Box */
+.modal-content {
+       opacity: 0.9;
+    background: antiquewhite;
+    padding: 20px;
+    border-radius: 10px;
+    width: 470px;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s;
+}
+ 
+/* Close Button */
+.close-button {
+        position: relative;
+    /* top: -6px; */
+    left: 184px;
+    /* right: -24px; */
+    font-size: 20px;
+    cursor: pointer;
+}
+ 
+/* Button to Open Modal */
+.open-modal-button {
+    background: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+ 
+.open-modal-button:hover {
+    background: #0056b3;
+}
+ 
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+ 
+.custom-button {
+    width: 310px;
+    padding: 11px 26px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 10px;
+    background: #E3F2FD;
+    border: 1px solid #007BFF;
+    transition: all 0.3s ease;
+}
+
+.custom-button:hover {
+    background: #BBDEFB;
+    border: 1px solid #0056b3;
+}
+
+.custom-button.active {
+    background: #5664b8 !important;
+    color: white;
+    border: 1px solid #1f1611;
+}
+
+/* Navigation Buttons */
+.next_button {
+    padding: 20px 27px;
+    justify-content: center;
+    margin: auto;
+    color: #0e0b0c;
+    font-size: 19px;
+    border-radius: 15px;
+    display: flex
+;
+    justify-content: center;
+    background: white;
+    align-items: center;
+    height: 42px;
+    margin-top: 52px;
+    width: fit-content;
+    border: 1px solid black;
+    font-weight: 700;
+    /* background: #bb8c75; */
+    cursor: pointer;
+    transition: all 0.3sease;
+    position: absolute;
+    top: 10px;
+    right: 125px;
+}
+
+.next_button:hover {
+    background: #a77a65;
+}
+
+.end-game-button {
+    display: block;
+    margin: 20px auto;
+    background: #ff9800;
+    color: white;
+    font-weight: bold;
+    padding: 10px 30px;
+    height: auto;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.end-game-button:hover {
+    background: #f57c00;
+}
+
+/* Feedback Styles */
+.feedback-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 577px;
+}
+
+.custom-feedback {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px 25px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.disease_info {
+        text-align: left;
+        
+        margin: auto;
+        padding: 15px 10px;
+    }
+    .disease_info h2 {
+        text-align: center;  /* Center the heading */
+        font-size: 19px;
+    }
+    .disease_info ul {
+        /* Left align bullet points */
+        overflow-y: scroll;
+    height: 221px;
+    display: flex
+;
+    flex-direction: column;
+    gap: 21px;
+    }
+.custom-wrong {
+        text-align: center;
+    background: #dcabab;
+    width: 377px;
+    border-radius: 6px;
+    /* display: flex
+; */
+    /* justify-content: center; */
+    margin: auto;
+    margin-top: 12px;
+    box-shadow: 1px 2px 5px black;
+    /* border: 1px solid black; */
+    padding: 10px 5px;
+}
+.custom-correct{
+        text-align: center;
+    background: #abdcc8;
+    width: 377px;
+    border-radius: 6px;
+    /* display: flex
+; */
+    /* justify-content: center; */
+    margin: auto;
+    margin-top: 12px;
+    box-shadow: 1px 2px 5px black;
+    /* border: 1px solid black; */
+    padding: 10px 5px;
+}

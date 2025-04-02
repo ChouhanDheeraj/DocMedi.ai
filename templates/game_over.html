@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Over</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/end.css') }}">
+</head>
+<body>
+    <div class="game-over-container">
+        <h1>🎊 Game Over 🎊</h1>
+       
+        <div class="score-display">Your total score: <span class="coin-count">{{ score }}</span> coins</div>
+       
+        <div class="feedback" id="feedback-message"></div>
+       
+        <div class="stars"></div>
+       
+        <form method="POST" action="{{ url_for('restart_game') }}" class="restart-form">
+            <button type="submit" class="custom-button">New Game</button>
+        </form>
+    </div>
+ 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const score = parseInt("{{ score }}") || 0;
+            const feedback = document.getElementById('feedback-message');
+            const stars = document.querySelector('.stars');
+           
+            // Set feedback based on score
+            if (score >= 80) {
+                feedback.textContent = "Outstanding performance! You're a true expert!";
+                stars.textContent = "★★★★★";
+            } else if (score >= 60) {
+                feedback.textContent = "Great job! You're getting really good at this!";
+                stars.textContent = "★★★★☆";
+            } else if (score >= 40) {
+                feedback.textContent = "Good effort! Try again to beat your high score!";
+                stars.textContent = "★★★☆☆";
+            } else if (score >= 20) {
+                feedback.textContent = "Nice try! Practice makes perfect!";
+                stars.textContent = "★★☆☆☆";
+            } else {
+                feedback.textContent = "Don't give up! You'll do better next time!";
+                stars.textContent = "★☆☆☆☆";
+            }
+           
+            // Create coin animation
+            createCoinCelebration();
+        });
+       
+        function createCoinCelebration() {
+            const container = document.querySelector('.game-over-container');
+            const coinCount = parseInt("{{ score }}") || 0;
+            const coinsToShow = Math.min(coinCount, 30); // Limit to 30 coins max
+           
+            for (let i = 0; i < coinsToShow; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'celebration-coin';
+                coin.innerHTML = '🪙';
+                coin.style.left = Math.random() * 100 + '%';
+                coin.style.top = -20 + 'px';
+                coin.style.fontSize = (10 + Math.random() * 10) + 'px';
+                container.appendChild(coin);
+               
+                // Animate each coin
+                setTimeout(() => {
+                    coin.style.opacity = '1';
+                    coin.style.top = Math.random() * 100 + '%';
+                    coin.style.left = Math.random() * 100 + '%';
+                    coin.style.transition = `all ${2 + Math.random() * 3}s ease-out`;
+                   
+                    setTimeout(() => {
+                        coin.style.opacity = '0';
+                    }, 2000);
+                }, i * 100);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f8ff;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.instructions-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+/* Header */
+.game-header {
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e1f5fe;
+}
+
+.game-header h1 {
+    color: #0277bd;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.logo {
+    color: #0288d1;
+    font-weight: bold;
+}
+
+.tagline {
+    color: #0288d1;
+    font-size: 1.2rem;
+    font-style: italic;
+}
+
+/* Content */
+.instructions-content {
+    padding: 0 20px;
+}
+
+.welcome-message {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #e1f5fe;
+    border-radius: 8px;
+}
+
+.instruction-section {
+    margin-bottom: 30px;
+}
+
+.instruction-section h3 {
+    color: #01579b;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+/* Lists */
+.steps-list {
+    padding-left: 20px;
+}
+
+.steps-list li {
+    margin-bottom: 15px;
+}
+
+.feedback-list, .coins-list {
+    padding-left: 20px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.feedback-list li, .coins-list li {
+    margin-bottom: 5px;
+}
+
+/* Leaderboard Note */
+.leaderboard-note {
+    background-color: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.leaderboard-note h3 {
+    color: #2e7d32;
+    margin-top: 0;
+}
+
+/* Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-width: 180px;
+}
+
+.submit-btn {
+    /* background-color: #0288d1;
+    color: white; */
+    background: #644113;
+    padding: 12px 24px;
+    color: wheat;
+    font-size: 18px;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid #6b3030;
+    border-radius: 9px;
+    cursor: pointer;
+    display: block;
+    margin: 1px auto 0;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #0277bd;
+    transform: translateY(-3px);
+}
+
+.help-btn {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.help-btn:hover {
+    background-color: #ffa000;
+    transform: translateY(-3px);
+}
+
+.leaderboard-btn {
+    background-color: #7cb342;
+    color: white;
+}
+
+.leaderboard-btn:hover {
+    background-color: #689f38;
+    transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .instructions-container {
+        margin: 15px;
+        padding: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

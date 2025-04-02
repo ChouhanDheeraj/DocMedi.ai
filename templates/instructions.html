@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocMedi - Game Instructions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/instructions.css') }}">
+</head>
+<body>
+    <div class="instructions-container">
+        <header class="game-header">
+            <h1>Game Instructions</h1>
+        </header>
+
+        <div class="instructions-content">
+            <p class="welcome-message">Welcome, Doctor! Your mission is to diagnose and treat 10 patients in one game. Follow these instructions carefully to ensure the best treatment for your patients and earn your place on the Leaderboard!</p>
+            
+            <div class="instruction-section">
+                <h3>How to Play:</h3>
+                <ol class="steps-list">
+                    <li>
+                        <strong>Diagnose the Patient:</strong> Each patient will present their symptoms. You must select the correct disease from the given options.
+                    </li>
+                    <li>
+                        <strong>Submit Your Answer:</strong> Click on the disease you believe is correct, then press the Submit button.
+                    </li>
+                    <li>
+                        <strong>Receive Feedback:</strong> After submission, the correct answer will be revealed along with:
+                        <ul class="feedback-list">
+                            <li>Disease Information 📄</li>
+                            <li>Recommended Medication 💊</li>
+                            <li>Primary Level Precautions ⚠️</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Earn Coins:</strong>
+                        <ul class="coins-list">
+                            <li>✅ Correct Diagnosis → +10 Coins</li>
+                            <li>❌ Incorrect Diagnosis → No coins, but you will learn from the correct answer!</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Next Patient:</strong> Click Next Patient to move on to the next case.
+                    </li>
+                    <li>
+                        <strong>Complete the Game:</strong> You must diagnose all 10 patients—no quitting midway!
+                    </li>
+                </ol>
+            </div>
+
+            <div class="leaderboard-note">
+                <h3>🏆 Leaderboard Update</h3>
+                <p>Your final score will be recorded and updated on the Leaderboard.</p>
+            </div>
+
+            <div class="action-buttons">
+                            
+                <form id="loginForm" action="{{ url_for('login') }}" method="POST">
+
+
+                <button type="submit" class="submit-btn">Start Playing</button>
+                </form>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>
