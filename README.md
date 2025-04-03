@@ -17,10 +17,23 @@ DocMedi.AI is an **AI-driven healthcare simulation game** where players take on 
 ## 🛠️ Technologies Used  
 - **Databricks App** – For hosting and running AI models.  
 - **Flask** – Backend framework for handling game logic and web hosting.  
-- **LLM (Databricks Meta Llama 3-70B)** – AI model for generating patient complaints, predicting diseases, and explaining medical conditions.  
+- **LLM (Databricks Meta Llama 3-70B)** – AI model for generating patient complaints, predicting diseases, and explaining medical conditions.
+
+
+
 
 ## 🏆 Hackathon Achievement  
 DocMedi.AI secured **first place in the leaderboard** of the **Tredence Infinity AI Hackathon**, showcasing innovative AI-driven healthcare simulations.  
+
+
+## GAME PREVIEW
+![image (5)](https://github.com/user-attachments/assets/6b5d5958-c1c4-4119-aabc-38b516eb007f)
+![image (6)](https://github.com/user-attachments/assets/4fa88d86-05c6-4f82-836c-aaf4e2964df5)
+![image (7)](https://github.com/user-attachments/assets/0c1d7b4b-896c-4283-a1a0-88889d11c41a)
+![image (8)](https://github.com/user-attachments/assets/4ac6a9a1-9db9-4103-adf7-fa322180ea5c)
+![image (9)](https://github.com/user-attachments/assets/8ef45f0f-b4bd-4a5f-9e7b-2ed45d62a6f9)
+
+
 
 
 🚀 **Ready to diagnose and save lives? Play DocMedi.AI now!**
