@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 import logging
 
-# Set up logging
+# Set up 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -26,8 +26,47 @@ client = OpenAI(api_key=DATABRICKS_TOKEN, base_url=DATABRICKS_BASE_URL)
  
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for session management
- 
-leaderboard = [] # in-memory leaderboard storage
+
+# In-memory leaderboard storage (was missing)
+leaderboard = []
+
+# Session Keys Constants
+SESSION_KEY_USER_NAME = 'user_name'
+SESSION_KEY_USER_EMAIL = 'user_email'
+SESSION_KEY_USER_AGE = 'user_age'
+SESSION_KEY_GAME_LEVEL = 'game_level'
+SESSION_KEY_SCORE = 'score'
+SESSION_KEY_PATIENTS_LEFT = 'patients_left'
+SESSION_KEY_CHAT_HISTORY = 'chat_history'
+SESSION_KEY_CURRENT_PATIENT = 'current_patient'
+SESSION_KEY_CORRECT_DISEASE = 'correct_disease'
+SESSION_KEY_DISEASE_OPTIONS = 'disease_options'
+
+# LLM call defaults
+LLM_TIMEOUT = 15
+LLM_MAX_TOKENS_DEFAULT = 400
+
+# Internal helper to centralize LLM calls
+def _call_llm(system_prompt, user_prompt, max_tokens=LLM_MAX_TOKENS_DEFAULT, temperature=0.7):
+    """
+    Helper that wraps the OpenAI client call and returns the assistant content or a safe fallback.
+    """
+    try:
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            max_tokens=max_tokens,
+            temperature=temperature,
+            timeout=LLM_TIMEOUT
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        # Centralized logging for any LLM error
+        logger.error("Detailed LLM error in helper: %s: %s", type(e).__name__, e)
+        return "Sorry, I am having trouble processing that request right now."
 
 # Game difficulty levels
 DIFFICULTY_LEVELS = {
@@ -98,37 +137,21 @@ def get_patient_complaint(level="level1"):
         "level3": "Use advanced medical terminology. Describe complex symptom patterns."
     }
     
-    syes_instr = f"""You are a patient visiting a doctor. {level_instructions[level]}  
-                    Describe your symptoms in a familiar way, ensuring that each response corresponds to a unique disease Be restricted to max 100 words.  
-                    """
+    system_prompt = f"You are a patient visiting a doctor. {level_instructions[level]} Describe your symptoms in a familiar way, ensuring that each response corresponds to a unique disease. Be restricted to max 100 words."
+    user_prompt = f"Generate a realistic patient complaint for a {DIFFICULTY_LEVELS[level]['name']} scenario. Complexity: {complexity*10}/10"
     
-    prompt = f"Generate a realistic patient complaint for a {DIFFICULTY_LEVELS[level]['name']} scenario. Complexity: {complexity*10}/10"
-    
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[{"role": "system", "content": syes_instr},
-                  {"role": "user", "content": prompt}],
-        max_tokens=100,
-        temperature=complexity
-    )
-    return response.choices[0].message.content
+    # Use centralized LLM helper
+    result = _call_llm(system_prompt=system_prompt, user_prompt=user_prompt, max_tokens=100, temperature=complexity)
+    return result or "I have a sore throat and a runny nose for two days."
 
 def predict_disease(complaint, level="level1"):
     complexity = DIFFICULTY_LEVELS[level]["complexity"]
     
-    prompt = f"Based on this complaint, predict the disease:\n\n{complaint}\n\nReturn only the disease name, using three words or less."
+    user_prompt = f"Based on this complaint, predict the disease:\n\n{complaint}\n\nReturn only the disease name, using three words or less."
+    system_prompt = f"You are a medical expert. Predict the disease based on the given complaint. Your response must be three words or less. Complexity level: {complexity*10}/10"
     
-    sys_instr = f"""You are a medical expert. Predict the disease based on the given complaint.
-                    Your response must be three words or less. Complexity level: {complexity*10}/10"""
-    
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[{"role": "system", "content": sys_instr},
-                  {"role": "user", "content": prompt}],
-        max_tokens=10,
-        temperature=complexity/2
-    )
-    return response.choices[0].message.content.strip()
+    result = _call_llm(system_prompt=system_prompt, user_prompt=user_prompt, max_tokens=10, temperature=complexity/2)
+    return (result or "Common Cold").strip()
 
 def get_disease_info(disease, level="level1"):
     complexity = DIFFICULTY_LEVELS[level]["complexity"]
@@ -139,22 +162,11 @@ def get_disease_info(disease, level="level1"):
         "level3": "Use advanced medical terminology and detailed explanations for medical professionals."
     }
     
-    prompt = f"Provide a brief summary of the disease {disease}, including only two key bullet points for symptoms, causes, or precautions. Format the response in HTML."
+    user_prompt = f"Provide a brief summary of the disease {disease}, including only two key bullet points for symptoms, causes, or precautions. Format the response in HTML."
+    system_prompt = f"You are a medical expert. Your response should be well-structured using HTML. - The disease name should be in `<h2>` and centered. - The summary should have only two bullet points and be left-aligned. - Use `<ul>` and `<li>` for bullet points. - The text should be short and concise. {level_instructions[level]}"
     
-    sys_instr = f'''You are a medical expert. Your response should be well-structured using HTML.
-                   - The disease name should be in `<h2>` and centered.
-                   - The summary should have only two bullet points and be left-aligned.
-                   - Use `<ul>` and `<li>` for bullet points.
-                   - The text should be short and concise. {level_instructions[level]}'''
-    
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[{"role": "system", "content": sys_instr},
-                  {"role": "user", "content": prompt}],
-        max_tokens=200,
-        temperature=complexity/2
-    )
-    return response.choices[0].message.content.strip()
+    result = _call_llm(system_prompt=system_prompt, user_prompt=user_prompt, max_tokens=200, temperature=complexity/2)
+    return result or f"<h2 style='text-align:center'>{disease}</h2><ul><li>Information unavailable.</li><li>Consult a professional.</li></ul>"
 
 def generate_disease_options(correct_disease, level="level1"):
     disease_options = {
@@ -188,6 +200,9 @@ def generate_disease_options(correct_disease, level="level1"):
 
 @app.route('/')
 def start():
+    """
+    Renders the start page with the leaderboard.
+    """
     return render_template('start.html', leaderboard=leaderboard)
 
 @app.route('/login', methods=['POST'])
@@ -198,34 +213,34 @@ def login():
     age = request.form.get('age', '0')
     level = request.form.get('level', 'level1')
     
-    # Store in session
-    session['user_name'] = name
-    session['user_email'] = email
-    session['user_age'] = age
-    session['game_level'] = level
+    # Store in session using constants
+    session[SESSION_KEY_USER_NAME] = name
+    session[SESSION_KEY_USER_EMAIL] = email
+    session[SESSION_KEY_USER_AGE] = age
+    session[SESSION_KEY_GAME_LEVEL] = level
     
     # Initialize game variables
-    session['score'] = 0
-    session['patients_left'] = 10
+    session[SESSION_KEY_SCORE] = 0
+    session[SESSION_KEY_PATIENTS_LEFT] = 10
     
     return redirect(url_for('index'))
 
 @app.route('/chat')
 def chat():
     # Initialize chat history if it doesn't exist
-    if 'chat_history' not in session:
-        session['chat_history'] = []
+    if SESSION_KEY_CHAT_HISTORY not in session:
+        session[SESSION_KEY_CHAT_HISTORY] = []
     
-    user_name = session.get('user_name', 'Guest')
+    user_name = session.get(SESSION_KEY_USER_NAME, 'Guest')
     
     # Add welcome message if this is a new chat
-    if not session['chat_history']:
+    if not session[SESSION_KEY_CHAT_HISTORY]:
         welcome_message = f"Hello {user_name}! I'm DocMedi, your friendly medical assistant. How can I help you today? Feel free to ask me any medical questions, and I'll do my best to assist you."
-        session['chat_history'] = [{"message": welcome_message, "is_user": False}]
+        session[SESSION_KEY_CHAT_HISTORY] = [{"message": welcome_message, "is_user": False}]
         session.modified = True
     
     return render_template('chat.html', 
-                          chat_history=session['chat_history'],
+                          chat_history=session[SESSION_KEY_CHAT_HISTORY],
                           user_name=user_name)
 
 
@@ -243,41 +258,25 @@ def send_message():
             return redirect(url_for('chat'))
         
         # Initialize chat history if needed
-        if 'chat_history' not in session:
-            session['chat_history'] = []
+        if SESSION_KEY_CHAT_HISTORY not in session:
+            session[SESSION_KEY_CHAT_HISTORY] = []
         
         # Add user message to history
-        session['chat_history'].append({"message": message, "is_user": True})
+        session[SESSION_KEY_CHAT_HISTORY].append({"message": message, "is_user": True})
         
-        # Simplified response handling with basic error management
-        try:
-            # Set a simple backup response in case of failure
-            backup_response = "I'm having trouble accessing my medical knowledge right now. Could you try asking something else?"
-            
-            # Attempt to get LLM response with limited chat history (just the current message)
-            # This avoids potential issues with large session data
-            sys_instr = '''You are a medical expert. Format your response using:
+        # Central system instruction and use centralized helper
+        sys_instr = '''You are a medical expert. Format your response using:
             - Headings (`<h2>`)
             - Bullet points (`<ul>` and `<li>`)
             - Paragraphs (`<p>`)
             - Ensure only the title is centered (`<h2 style='text-align:center;'>`)
             - Provide a short summary with two  bullet points'''
-            response = client.chat.completions.create(
-                model=MODEL_NAME,
-                messages=[
-                    {"role": "system", "content": sys_instr},
-                    {"role": "user", "content": message}
-                ],
-                max_tokens=300,
-                temperature=0.7
-            )
-            
-            chat_response = response.choices[0].message.content
-            session['chat_history'].append({"message": chat_response, "is_user": False})
-            
-        except Exception:
-            # Use backup response instead of trying detailed error handling
-            session['chat_history'].append({"message": backup_response, "is_user": False})
+        
+        chat_response = _call_llm(system_prompt=sys_instr, user_prompt=message, max_tokens=300, temperature=0.7)
+        if not chat_response:
+            chat_response = "I'm having trouble accessing my medical knowledge right now. Could you try asking something else?"
+        
+        session[SESSION_KEY_CHAT_HISTORY].append({"message": chat_response, "is_user": False})
         
         # Ensure session is saved
         session.modified = True
@@ -290,46 +289,46 @@ def send_message():
 @app.route('/clear_chat', methods=['POST'])
 def clear_chat():
     # Clear chat history
-    session['chat_history'] = []
+    session[SESSION_KEY_CHAT_HISTORY] = []
     return redirect(url_for('chat'))
 
 @app.route('/index')
 def index():
     # If user not logged in, redirect to start page
-    if 'user_name' not in session:
+    if SESSION_KEY_USER_NAME not in session:
         return redirect(url_for('start'))
     
-    level = session.get('game_level', 'level1')
+    level = session.get(SESSION_KEY_GAME_LEVEL, 'level1')
     
-    if 'score' not in session:
-        session['score'] = 0
-    if 'patients_left' not in session:
-        session['patients_left'] = 10
-    if 'current_patient' not in session or 'correct_disease' not in session:
-        session['current_patient'] = get_patient_complaint(level)
-        session['correct_disease'] = predict_disease(session['current_patient'], level)
-        session['disease_options'] = generate_disease_options(session['correct_disease'], level)
+    if SESSION_KEY_SCORE not in session:
+        session[SESSION_KEY_SCORE] = 0
+    if SESSION_KEY_PATIENTS_LEFT not in session:
+        session[SESSION_KEY_PATIENTS_LEFT] = 10
+    if SESSION_KEY_CURRENT_PATIENT not in session or SESSION_KEY_CORRECT_DISEASE not in session:
+        session[SESSION_KEY_CURRENT_PATIENT] = get_patient_complaint(level)
+        session[SESSION_KEY_CORRECT_DISEASE] = predict_disease(session[SESSION_KEY_CURRENT_PATIENT], level)
+        session[SESSION_KEY_DISEASE_OPTIONS] = generate_disease_options(session[SESSION_KEY_CORRECT_DISEASE], level)
     
-    if session['patients_left'] < 0:
-        session['patients_left'] = 10
+    if session[SESSION_KEY_PATIENTS_LEFT] < 0:
+        session[SESSION_KEY_PATIENTS_LEFT] = 10
 
     return render_template('index.html', 
-                           current_patient=session['current_patient'],
-                           disease_options=session['disease_options'],
-                           score=session['score'], 
-                           patients_left=session['patients_left'],
+                           current_patient=session[SESSION_KEY_CURRENT_PATIENT],
+                           disease_options=session[SESSION_KEY_DISEASE_OPTIONS],
+                           score=session[SESSION_KEY_SCORE], 
+                           patients_left=session[SESSION_KEY_PATIENTS_LEFT],
                            level=DIFFICULTY_LEVELS[level],
-                           user_name=session['user_name'])
+                           user_name=session[SESSION_KEY_USER_NAME])
  
 @app.route('/submit', methods=['POST'])
 def submit():
     selected_disease = request.form['selected_disease']
-    correct_disease = session['correct_disease']
-    level = session.get('game_level', 'level1')
+    correct_disease = session[SESSION_KEY_CORRECT_DISEASE]
+    level = session.get(SESSION_KEY_GAME_LEVEL, 'level1')
     points_multiplier = DIFFICULTY_LEVELS[level]['points_multiplier']
     
     if selected_disease == correct_disease:
-        session['score'] += 10
+        session[SESSION_KEY_SCORE] += 10
         feedback = f"✅ Correct! You earned 10 coins."
         ans_zone="true";
     else:
@@ -337,27 +336,27 @@ def submit():
         ans_zone="false";
 
     disease_info = get_disease_info(correct_disease, level)
-    session['patients_left'] -= 1
+    session[SESSION_KEY_PATIENTS_LEFT] -= 1
 
     return render_template('index.html', 
                            ans_zone=ans_zone,
                            feedback=feedback, 
                            disease_info=disease_info,
-                           current_patient=session['current_patient'], 
-                           disease_options=session['disease_options'],
-                           score=session['score'], 
-                           patients_left=session['patients_left'],
+                           current_patient=session[SESSION_KEY_CURRENT_PATIENT], 
+                           disease_options=session[SESSION_KEY_DISEASE_OPTIONS],
+                           score=session[SESSION_KEY_SCORE], 
+                           patients_left=session[SESSION_KEY_PATIENTS_LEFT],
                            level=DIFFICULTY_LEVELS[level],
-                           user_name=session['user_name'])
+                           user_name=session[SESSION_KEY_USER_NAME])
  
 @app.route('/next_patient', methods=['POST'])
 def next_patient():
-    level = session.get('game_level', 'level1')
-    session['current_patient'] = get_patient_complaint(level)
-    session['correct_disease'] = predict_disease(session['current_patient'], level)
-    session['disease_options'] = generate_disease_options(session['correct_disease'], level)
+    level = session.get(SESSION_KEY_GAME_LEVEL, 'level1')
+    session[SESSION_KEY_CURRENT_PATIENT] = get_patient_complaint(level)
+    session[SESSION_KEY_CORRECT_DISEASE] = predict_disease(session[SESSION_KEY_CURRENT_PATIENT], level)
+    session[SESSION_KEY_DISEASE_OPTIONS] = generate_disease_options(session[SESSION_KEY_CORRECT_DISEASE], level)
     
-    if session['patients_left'] == 0:
+    if session[SESSION_KEY_PATIENTS_LEFT] == 0:
         return redirect(url_for('game_over'))
     
     return redirect(url_for('index'))
@@ -365,15 +364,15 @@ def next_patient():
 @app.route('/game_over', methods=['GET'])
 def game_over():
     return render_template('game_over.html', 
-                          score=session['score'], 
-                          user_name=session.get('user_name', 'Anonymous'),
-                          level_name=DIFFICULTY_LEVELS[session.get('game_level', 'level1')]['name'])
+                          score=session[SESSION_KEY_SCORE], 
+                          user_name=session.get(SESSION_KEY_USER_NAME, 'Anonymous'),
+                          level_name=DIFFICULTY_LEVELS[session.get(SESSION_KEY_GAME_LEVEL, 'level1')]['name'])
  
 @app.route('/submit_score', methods=['POST'])
 def submit_score():
-    player_name = session.get('user_name', 'Anonymous')
-    score = session.get('score', 0)
-    level = session.get('game_level', 'level1')
+    player_name = session.get(SESSION_KEY_USER_NAME, 'Anonymous')
+    score = session.get(SESSION_KEY_SCORE, 0)
+    level = session.get(SESSION_KEY_GAME_LEVEL, 'level1')
     level_name = DIFFICULTY_LEVELS[level]['name']
     date = datetime.now().strftime("%Y-%m-%d")
     
@@ -397,19 +396,19 @@ def submit_score():
 @app.route('/restart_game', methods=['POST'])
 def restart_game():
     # Clear only game-related session data, keep user info
-    user_name = session.get('user_name')
-    user_email = session.get('user_email')
-    user_age = session.get('user_age')
+    user_name = session.get(SESSION_KEY_USER_NAME)
+    user_email = session.get(SESSION_KEY_USER_EMAIL)
+    user_age = session.get(SESSION_KEY_USER_AGE)
     
     session.clear()
     
     # Restore user info
     if user_name:
-        session['user_name'] = user_name
+        session[SESSION_KEY_USER_NAME] = user_name
     if user_email:
-        session['user_email'] = user_email
+        session[SESSION_KEY_USER_EMAIL] = user_email
     if user_age:
-        session['user_age'] = user_age
+        session[SESSION_KEY_USER_AGE] = user_age
         
     return redirect(url_for('start'))
 
